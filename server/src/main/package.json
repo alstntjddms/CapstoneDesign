@@ -1,0 +1,7 @@
+{
+  "name": "main",
+  "version": "1.0.0",
+  "dependencies": {
+    "@metamask/detect-provider": "^1.2.0"
+  }
+}

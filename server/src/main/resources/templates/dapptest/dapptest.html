@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <!--    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0-rc.0/web3.min.js"></script>
+    <script>
+        // console.log(web3);    // {eth: ..., shh: ...} 이렇게 오브젝트가 출력된다
+
+        // Web3가 브라우저에 주입되었는지 확인(Mist/MetaMask)
+
+        // 사용자가 Metamask를 설치하지 않은 경우에 대해 처리
+        // 사용자들에게 Metamask를 설치하라는 등의 메세지를 보여줄 것
+        // const getWeb3 = async () =>{
+        //     return new Promise(async (resolve, reject) => {
+        //         const web3 = new Web3(window.ethereum)
+        //         try{
+        //             await window.ethereum.request({method : "eth_requestAccounts"})
+        //             resolve(web3)
+        //         } catch (error){
+        //             reject(error)
+        //         }
+        //     })
+        // }
+        //
+        // document.addEventListener("test1", () =>{
+        //     document.getElementById("test2").addEventListener("click", async () =>{
+        //         const web3 = await getWeb3()
+        //         const walletAddress = await web3.eth.requestAccounts()
+        //         const walletBalanceInWei = await web3.eth.getBalance(walletAddress[0])
+        //         const walletBalanceInEth = Math.round(web3.utils.fromeWei(walletBalanceInWei) * 1000) / 1000
+        //
+        //         document.getElementById("a").innerText = walletAddress
+        //         document.getElementById("b").innerText = walletBalanceInEth
+        //     })
+        // })
+
+        // document.addEventListener("DOMContentLoaded", async function(event) {
+        //     if (window.ethereum) {
+        //
+        //         ethereum.request({ method: "eth_requestAccounts" })
+        //             .then(() => document.getElementById("count").click())
+        //             .catch((err) => console.error(err.message));
+        //
+        //
+        //
+        //         ethereum.on("chainChanged", () => window.location.reload());
+        //
+        //         ethereum.on("accountsChanged", (accounts) => {
+        //             if (accounts.length > 0) {
+        //                 console.log(`Using account ${accounts[0]}`);
+        //             } else {
+        //                 console.error("0 accounts.");
+        //             }
+        //         });
+        //
+        //         ethereum.on("message", (message) => console.log(message));
+        //
+        //         ethereum.on("connect", (info) => {
+        //             console.log(`Connected to network ${info}`);
+        //         });
+        //
+        //         ethereum.on("disconnect", (error) => {
+        //             console.log(`Disconnected from network ${error}`);
+        //         });
+        //
+        //         // const provider = new ethers.providers.Web3Provider(window.ethereum);
+        //
+        //         // const signer = provider.getSigner();
+        //
+        //         // const contract = new ethers.Contract(address, abi, signer);
+        //
+        //         const acc = await window.ethereum.request({
+        //             method: "eth_requestAccounts",
+        //         });
+        //         console.log("requestAccounts" + acc);
+        //
+        //         // const acc1 = await window.ethereum.request({
+        //         //     method: "wallet_switchEthereumChain",
+        //         //     params: [{ chainId: "0xaF3B1f2DebD4e7cA2aBEe408bf294903AcB9f792", }],
+        //         // });
+        //         // console.log(acc1);
+        //
+        //
+        //         // const acc2 = await window.ethereum.request({
+        //         //     method: "DailyToken_getBalance",
+        //         //     type: "ERC20",
+        //         //     params: [
+        //         //         '0xD2F2513EaC9d2ff914BA63C14d91b96c1Ba4b7CD',
+        //         //         'latest',
+        //         //     ],
+        //         // });
+        //
+        //
+        //     } else {
+        //         console.error("Install MetaMask.");
+        //     }
+        // });
+        let accounts;
+        async function connectWallet(){
+            accounts = await window.ethereum.request({method:"eth_requestAccounts"})
+                .catch((err)=>{
+                    console.log("err " + err.code)
+                })
+            console.log("accounts" + accounts)
+        }
+
+
+        async function checkBalance(){
+            let balance = await window.ethereum.request({
+                jsonrpc: "2.0",
+                method:"eth_getBalance",
+                param: [
+                    "0xd2f2513eac9d2ff914ba63c14d91b96c1ba4b7cd"
+
+                ]
+            }).catch((err)=>{
+                console.log("err " + err)
+            })
+            console.log("balance" + parseInt(balance))
+        }
+
+
+        console.log("연결" + window.ethereum.isConnected());
+
+
+    </script>
+
+</head>
+
+<body>
+<!--<button onclick="getWeb3()">연결 </button>-->
+<h1>Count: <span id="count">?</span></h1>
+
+<button id="increase">+</button>
+<button id="decrease">-</button>
+<button onclick="connectWallet()">계정</button>
+<button onclick="checkBalance()">조회</button>
+<button onclick="checkBalance()">connnn</button>
+
+</body>
+</html>
+

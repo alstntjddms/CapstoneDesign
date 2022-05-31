@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6,  user-scalable=no">
+
+</head>
+<style>
+    img {
+        display: block;
+        margin: auto;
+    }
+</style>
+
+<body scroll="no">
+<div class="container" style="margin-top: 200px">
+
+    <div class="logo">
+        <img src="img/제목.jpg" width="400" height="auto" alt="제목">
+    </div>
+
+    <div class="logo">
+        <img src="img/logo.jpg" width="400" height="auto" alt="로고">
+    </div>
+    <br><br>
+
+    <hr class="my-4">
+    <div class="row">
+        <div class="col">
+            <button class="w-100 btn btn-dark btn-lg"
+                    onclick="location.href='items.html'"
+                    th:onclick="|location.href='@{/login}'|" type="button">
+                로그인
+            </button>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg" type="button"
+                    th:onclick="|location.href='@{/members/add}'|">
+                회원 가입
+            </button>
+        </div>
+
+    </div>
+    <hr class="my-4">
+</div> <!-- /container -->
+
+
+
+</body>
+</html>

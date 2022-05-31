@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!--    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0-rc.0/web3.min.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+            type="application/javascript"></script><script>
+
+window.onload = function () {
+    if(window.ethereum !== undefined){
+        this.ethereum.on("accountChanged", hanleAccountsChanged)
+    }
+
+}
+
+const hanleAccountsChanged = (accounts) =>{
+    console.log("accounts changed")
+}
+
+
+let accounts;
+async function connectWallet(){
+    accounts = await window.ethereum.request({method:"eth_requestAccounts"})
+        .catch((err)=>{
+        console.log("err " + err.code)
+    })
+    console.log("accounts" + accounts)
+}
+
+async function checkBalance(){
+    let balance = await window.ethereum.request({
+        jsonrpc: "2.0",
+        method:"eth_getBalance",
+        param: [
+            "0xd2f2513eac9d2ff914ba63c14d91b96c1ba4b7cd"
+
+        ]
+    }).catch((err)=>{
+        console.log("err " + err)
+    })
+    console.log("balance" + parseInt(balance))
+}
+
+async function send(){
+    let params = [{
+        "from": "0xD2F2513EaC9d2ff914BA63C14d91b96c1Ba4b7CD",
+        "to": "0x5950D44501457034D2e0d04AD46229Ef56d482a9",
+        "gas": Number(21000).toString(16), // 30400
+        "gasPrice": Number(2500000).toString(16), // 10000000000000
+        "value": Number(100000000000000000).toString(16), // 2441406250
+    }]
+
+    let result = window.ethereum.request({method: "eth_sendTransaction",
+    params}).catch((err) =>{
+        console.log(err)
+    })
+    console.log(result);
+}
+
+//contract address
+let coinAddress = "0xaF3B1f2DebD4e7cA2aBEe408bf294903AcB9f792"
+//abi
+let abi = [
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "name",
+        "outputs": [
+            {
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "_spender",
+                "type": "address"
+            },
+            {
+                "name": "_value",
+                "type": "uint256"
+            }
+        ],
+        "name": "approve",
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "totalSupply",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "_from",
+                "type": "address"
+            },
+            {
+                "name": "_to",
+                "type": "address"
+            },
+            {
+                "name": "_value",
+                "type": "uint256"
+            }
+        ],
+        "name": "transferFrom",
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "decimals",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint8"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [
+            {
+                "name": "_owner",
+                "type": "address"
+            }
+        ],
+        "name": "balanceOf",
+        "outputs": [
+            {
+                "name": "balance",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "symbol",
+        "outputs": [
+            {
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "_to",
+                "type": "address"
+            },
+            {
+                "name": "_value",
+                "type": "uint256"
+            }
+        ],
+        "name": "transfer",
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [
+            {
+                "name": "_owner",
+                "type": "address"
+            },
+            {
+                "name": "_spender",
+                "type": "address"
+            }
+        ],
+        "name": "allowance",
+        "outputs": [
+            {
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "payable": true,
+        "stateMutability": "payable",
+        "type": "fallback"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "name": "spender",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "name": "value",
+                "type": "uint256"
+            }
+        ],
+        "name": "Approval",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "name": "from",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "name": "to",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "name": "value",
+                "type": "uint256"
+            }
+        ],
+        "name": "Transfer",
+        "type": "event"
+    }
+]
+//provider
+let provider = new ethers.providers.Web3Provider(window.ethereum)
+console.log("provider" + provider)
+
+async function contract() {
+    let subContract = new ethers.Contract(coinAddress, abi, provider.getSigner())
+    const amount = ethers.utils.parseUnits("10.0", 18)
+    let tmp = await subContract.approve("0xD2F2513EaC9d2ff914BA63C14d91b96c1Ba4b7CD", 1000000000)
+    console.log(tmp)
+    const num = await subContract.transferFrom("0xD2F2513EaC9d2ff914BA63C14d91b96c1Ba4b7CD", "0x372Dc866B7a8770bA8e4fe45fE046DbddA818683", 2200)
+    .then(tx =>{
+
+    }).catch((err)=>{
+            console.log("err " + err)
+        })
+
+    console.log(num)
+    console.log(balance.toString() / Math.pow(10,18))
+}
+
+
+console.log("연결" + window.ethereum.isConnected());
+
+
+</script>
+
+</head>
+
+<body>
+<!--<button onclick="getWeb3()">연결 </button>-->
+<h1>Count: <span id="count">?</span></h1>
+
+<button id="increase">+</button>
+<button id="decrease">-</button>
+<button onclick="connectWallet()">계정</button>
+<button onclick="checkBalance()">조회</button>
+<button onclick="send()">send</button>
+<button onclick="contract()">contract</button>
+
+</body>
+</html>
+

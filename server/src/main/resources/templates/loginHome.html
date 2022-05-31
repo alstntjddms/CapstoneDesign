@@ -1,0 +1,401 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <link th:href="@{/css/bootstrap.min.css}"
+          href="../css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0-rc.0/web3.min.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+            type="application/javascript"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=0.6,  user-scalable=no">
+
+<!--    새로고침-->
+<!--    <META HTTP-EQUIV="refresh" CONTENT="3">-->
+</head>
+
+<style>
+    body {
+        width: 100%;
+        height: 100%;
+    }
+    canvas {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+</style>
+
+<!--calendar-->
+<script>
+    window.onload = function () {
+        pieChartDraw();
+    }
+
+    let pieChartData = {
+        labels: ['현재 섭취량', '남은 섭취량'],
+        datasets: [{
+            data: [ [[${member.water}]], ([[${member.weight}]] * 30 - [[${member.water}]]) ],
+            backgroundColor: ['rgb(47,169,220)', 'rgb(154,153,153)']
+        }],
+    };
+
+    let pieChartDraw = function () {
+        let ctx = document.getElementById('pieChartCanvas').getContext('2d');
+
+        window.pieChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: pieChartData,
+            options: {
+                responsive: false,
+            }
+        });
+    };
+
+    Chart.pluginService.register({
+        beforeDraw: function(chart) {
+            var width = chart.chart.width,
+                height = chart.chart.height,
+                ctx = chart.chart.ctx;
+            ctx.restore();
+            var fontSize = (height / 114).toFixed(2);
+            ctx.font = fontSize + "em sans-serif";
+            ctx.textBaseline = "middle";
+            var text = Math.ceil( ([[${member.water}]] / ([[${member.weight}]]*30))*100 ) + "%",
+                textX = Math.round((width - ctx.measureText(text).width) / 2) + 3,
+                textY = height / 2 + 18;
+            console.log("aa " + typeof [[${member.DailyToken}]]);
+            ctx.fillText(text, textX, textY);
+            ctx.save();
+        }
+    });
+</script>
+
+<!--dapp-->
+<script>
+    let accounts;
+    async function connectWallet(){
+        accounts = await window.ethereum.request({method:"eth_requestAccounts"})
+            .catch((err)=>{
+                console.log("err " + err.code)
+            })
+        console.log("accounts" + accounts)
+    }
+
+    console.log(("[[${member.TotalDailyToken} + ${member.DailyToken}]]") * 100)
+    //contract address
+    let coinAddress = "0xaF3B1f2DebD4e7cA2aBEe408bf294903AcB9f792"
+    //abi
+    let abi = [
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "name",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "_spender",
+                    "type": "address"
+                },
+                {
+                    "name": "_value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "approve",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "totalSupply",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "_from",
+                    "type": "address"
+                },
+                {
+                    "name": "_to",
+                    "type": "address"
+                },
+                {
+                    "name": "_value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "transferFrom",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "decimals",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint8"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "_owner",
+                    "type": "address"
+                }
+            ],
+            "name": "balanceOf",
+            "outputs": [
+                {
+                    "name": "balance",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "symbol",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "_to",
+                    "type": "address"
+                },
+                {
+                    "name": "_value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "transfer",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "_owner",
+                    "type": "address"
+                },
+                {
+                    "name": "_spender",
+                    "type": "address"
+                }
+            ],
+            "name": "allowance",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "payable": true,
+            "stateMutability": "payable",
+            "type": "fallback"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "name": "owner",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "name": "spender",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "name": "value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "Approval",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "name": "from",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "name": "to",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "name": "value",
+                    "type": "uint256"
+                }
+            ],
+            "name": "Transfer",
+            "type": "event"
+        }
+    ]
+    //provider
+    let provider = new ethers.providers.Web3Provider(window.ethereum)
+
+    function httpGet(theUrl)
+    {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", theUrl, false ); // false for synchronous request
+        xmlHttp.send( null );
+        console.log(theUrl)
+        return xmlHttp.responseText;
+    }
+
+    async function contract() {
+        let subContract = new ethers.Contract(coinAddress, abi, provider.getSigner())
+        let tmp = await subContract.approve("0xD2F2513EaC9d2ff914BA63C14d91b96c1Ba4b7CD", 10000000)
+        const num = await subContract.transferFrom("0xD2F2513EaC9d2ff914BA63C14d91b96c1Ba4b7CD", "[[${member.metamaskId}]]", "[[${member.TotalDailyToken} + ${member.DailyToken}]]" * 100)
+        console.log(num)
+        httpGet("http://localhost:8080/test2?loginid=[[${member.loginId}]]")
+
+
+    }
+    console.log("연결" + window.ethereum.isConnected());
+</script>
+
+
+<body>
+<div class="container" style="width: 100%; margin-top: 120px">
+    <div class="logo" style="float: left">
+        <img src="img/제목.jpg" width="160" height="auto" alt="제목" style="display: block; margin-left: 40px">
+        <img src="img/logo.jpg" width="160" height="auto" alt="제목" style="margin-left: 40px">
+    </div>
+    <div id="test" align="right" style="position: relative">
+        <button class="w-50 h-100 btn btn-warning btn-lg" style="display: block; float: right"
+                th:text="|로그인 아이디: ${member.name}|">
+        </button>
+        <button class="w-50 h-100 btn btn-light btn-lg" style="display: block; float: right" onClick="window.location.reload()"
+                th:text="|┌오늘의 DailyToken┐ ${member.DailyToken} |">
+        </button>
+        <button class="w-50 h-100 btn btn-light btn-lg" style="display: block; float: right" onClick="window.location.reload()"
+                th:text="|┌총 DailyToken┐ ${member.TotalDailyToken + member.DailyToken} |">
+        </button>
+        <button class="w-50 btn btn-dark btn-lg" onclick="contract()" th:text="|출금 ${member.TotalDailyToken + member.DailyToken}|">
+        </button>
+    </div>
+
+<!--    <form action="/test2" method="get" target="_blank">-->
+<!--        <input type="hidden" id="loginid" name="loginid" value=aa>-->
+<!--        <button type="submit">Submit</button>-->
+<!--    </form>-->
+
+    <div align="right" style="position: relative">
+        <button class="w-50 h-100 btn btn-info btn-lg" style="float: right" onClick="window.location.reload()"
+                th:text="|수분 섭취량: ${member.water} mL |">
+<!--            <p class="mb-3" th:text="|목표 섭취량: ${member.weight*30} mL|">목표 섭취량</p>-->
+        </button>
+        <button class="w-50 h-100 btn btn-success btn-lg" style="float: left; display: block" onClick="window.location.reload()"
+                th:text="|현재 산소포화도 : ${member.ox} %|">
+    </button>
+    </div>
+
+<!--    수분섭취-->
+    <div class="chart-div" style="text-align:center;">
+        <canvas id="pieChartCanvas" width="400px" height="400px"></canvas>
+    </div>
+<!--    수분섭취 끝-->
+
+    <hr class="my-4">
+    <div class="row">
+        <div class="col">
+            <form  th:action="@{/calendar}" method="post">
+                <button class="w-100 btn btn-danger btn-lg"
+                        onclick="location.href='calendar.html'" type="submit">
+                    달력
+                </button>
+            </form>
+        </div>
+        <div class="col">
+            <form th:action="@{/logout}" method="post">
+                <button class="w-100 btn btn-secondary btn-lg"
+                        onclick="location.href='items.html'" type="submit">
+                    로그아웃
+                </button>
+            </form>
+        </div>
+    </div>
+    <hr class="my-4">
+</div>
+<!-- /container -->
+</body>
+</html>
