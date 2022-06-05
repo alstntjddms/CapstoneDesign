@@ -61,7 +61,7 @@ public class MemberContorller {
         PreparedStatement pstmt = null;
         Properties jdbcProperties = new Properties();
         jdbcProperties.setProperty("user", "test");
-        jdbcProperties.setProperty("password", "Alstn3599@@");
+        jdbcProperties.setProperty("password", "root");
         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/serverdb", jdbcProperties);
         pstmt = conn.prepareStatement("UPDATE info SET DailyToken = " + member.getDailyToken()  + " WHERE loginid = '" + member.getLoginId() + "'");
         pstmt.executeUpdate();

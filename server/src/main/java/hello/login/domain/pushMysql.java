@@ -20,7 +20,7 @@ public class pushMysql {
         PreparedStatement pstmt = null;
         Properties jdbcProperties = new Properties();
         jdbcProperties.setProperty("user", "test");
-        jdbcProperties.setProperty("password", "Alstn3599@@");
+        jdbcProperties.setProperty("password", "root");
 
         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/serverdb", jdbcProperties);
         pstmt = conn.prepareStatement(INSERT);
@@ -49,7 +49,7 @@ public class pushMysql {
         PreparedStatement pstmt = null;
         Properties jdbcProperties = new Properties();
         jdbcProperties.setProperty("user", "test");
-        jdbcProperties.setProperty("password", "Alstn3599@@");
+        jdbcProperties.setProperty("password", "root");
 
         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/serverdb", jdbcProperties);
 
@@ -67,7 +67,7 @@ public class pushMysql {
 
         Properties jdbcProperties = new Properties();
         jdbcProperties.setProperty("user", "test");
-        jdbcProperties.setProperty("password", "Alstn3599@@");
+        jdbcProperties.setProperty("password", "root");
 
         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/serverdb", jdbcProperties);
 

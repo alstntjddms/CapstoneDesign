@@ -24,7 +24,7 @@ public class MemberRepository {
         PreparedStatement pstmt;
         Properties jdbcProperties = new Properties();
         jdbcProperties.setProperty("user", "test");
-        jdbcProperties.setProperty("password", "Alstn3599@@");
+        jdbcProperties.setProperty("password", "root");
         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/serverdb", jdbcProperties);
         pstmt = conn.prepareStatement("SELECT * FROM  info");
         ResultSet rs = pstmt.executeQuery();
